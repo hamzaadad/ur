@@ -1,12 +1,21 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
+import moment from 'moment';
 import * as serviceWorker from './serviceWorker';
+import { createStore, applyMiddleware } from 'redux';
+import thunk from 'redux-thunk';
+import { Provider } from 'react-redux';
 
-ReactDOM.render(<App />, document.getElementById('root'));
+import App from './App';
+import rootReducer from './reducers';
+import { fetchGithubDataByPage } from './actions/index';
 
-// If you want your app to work offline and load faster, you can change
-// unregister() to register() below. Note this comes with some pitfalls.
-// Learn more about service workers: https://bit.ly/CRA-PWA
+const store = createStore(rootReducer, applyMiddleware(thunk));
+
+
+store.dispatch(fetchGithubDataByPage(moment().subtract(160, "d").format("YYYY-MM-DD"), 1));
+
+ReactDOM.render(<Provider store={store}><App /></Provider>, document.getElementById('root'));
+
+
 serviceWorker.unregister();
